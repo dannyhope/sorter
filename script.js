@@ -78,6 +78,10 @@ class UIController {
         this.initializeElements();
         this.bindEvents();
         this.showState('editing-empty');
+        // Load animals list by default
+        const animals = ['Dog', 'Cat', 'Lizard', 'Bear', 'Snake'];
+        this.listInput.value = animals.join('\n');
+        this.saveListBtn.disabled = false;
     }
 
     initializeElements() {
@@ -96,7 +100,7 @@ class UIController {
 
         // Buttons and controls
         this.saveListBtn = document.getElementById('save-list');
-        this.exampleBtn = document.getElementById('example-btn');
+        this.clearListBtn = document.getElementById('clear-list');
         this.leftItemBtn = document.getElementById('left-item');
         this.rightItemBtn = document.getElementById('right-item');
         this.copyListBtn = document.getElementById('copy-list');
@@ -113,14 +117,56 @@ class UIController {
     }
 
     bindEvents() {
-        this.exampleBtn.addEventListener('click', () => this.loadExample());
         this.saveListBtn.addEventListener('click', () => this.startSorting());
+        this.clearListBtn.addEventListener('click', () => {
+            this.listInput.value = '';
+            this.saveListBtn.disabled = true;
+        });
         this.leftItemBtn.addEventListener('click', () => this.handleComparison('left'));
         this.rightItemBtn.addEventListener('click', () => this.handleComparison('right'));
         this.copyListBtn.addEventListener('click', () => this.copyList());
         this.editListBtns.forEach(btn => 
             btn.addEventListener('click', () => this.showState('editing-empty'))
         );
+
+        // Text area drag and drop handling
+        this.listInput.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.listInput.style.borderColor = '#007AFF';
+        });
+
+        this.listInput.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.listInput.style.borderColor = '#ddd';
+        });
+
+        this.listInput.addEventListener('drop', async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.listInput.style.borderColor = '#ddd';
+            
+            // Handle text drops
+            const text = e.dataTransfer.getData('text');
+            if (text) {
+                const currentText = this.listInput.value;
+                const newText = currentText ? currentText + '\n' + text : text;
+                this.listInput.value = newText;
+                this.updateSaveButton();
+                return;
+            }
+
+            // Handle image drops
+            const files = Array.from(e.dataTransfer.files).filter(file => 
+                file.type.startsWith('image/')
+            );
+            if (files.length > 0) {
+                // Switch to image mode if we're in text mode
+                this.switchMode('image');
+                await this.handleFilesDrop(files);
+            }
+        });
 
         this.listInput.addEventListener('input', () => {
             this.saveListBtn.disabled = !this.listInput.value.trim();
@@ -170,12 +216,6 @@ class UIController {
         Object.entries(this.states).forEach(([name, element]) => {
             element.classList.toggle('hidden', name !== state);
         });
-    }
-
-    loadExample() {
-        const animals = ['Dog', 'Cat', 'Lizard', 'Bear', 'Snake'];
-        this.listInput.value = animals.join('\n');
-        this.saveListBtn.disabled = false;
     }
 
     startSorting() {

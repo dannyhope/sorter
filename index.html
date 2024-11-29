@@ -14,33 +14,15 @@
 
         <div class="state" id="editing-empty">
             <h2>Edit list</h2>
-            <div class="mode-switcher">
-                <button id="text-mode" class="mode-btn active">Text Mode</button>
-                <button id="image-mode" class="mode-btn">Image Mode</button>
-            </div>
             <div class="input-container">
                 <div id="text-input-area">
-                    <textarea id="list-input" placeholder="Enter items, one per line"></textarea>
-                </div>
-                <div id="image-input-area" class="hidden">
-                    <div class="image-drop-zone">
-                        <div class="drop-message">
-                            <svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                <polyline points="17 8 12 3 7 8"/>
-                                <line x1="12" y1="3" x2="12" y2="15"/>
-                            </svg>
-                            <p>Drag images here or click to upload</p>
-                        </div>
-                        <input type="file" id="file-input" multiple accept="image/*" class="hidden">
-                    </div>
+                    <textarea id="list-input" placeholder="Enter items, one per line, or drag images here"></textarea>
                 </div>
                 <div id="preview-container" class="preview-container"></div>
             </div>
             <div class="controls">
-                <button id="example-btn">Use animals example</button>
                 <button id="save-list" disabled>Save list</button>
-                <button id="clear-list">Clear list</button>
+                <button id="clear-list" class="secondary">Clear list</button>
             </div>
         </div>
 
