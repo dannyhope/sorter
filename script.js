@@ -94,8 +94,7 @@ class UIController {
 
         // Input elements
         this.listInput = document.getElementById('list-input');
-        this.fileInput = document.getElementById('file-input');
-        this.imageDropZone = document.querySelector('.image-drop-zone');
+        this.textInputArea = document.getElementById('text-input-area');
         this.previewContainer = document.getElementById('preview-container');
 
         // Buttons and controls
@@ -105,10 +104,6 @@ class UIController {
         this.rightItemBtn = document.getElementById('right-item');
         this.copyListBtn = document.getElementById('copy-list');
         this.editListBtns = document.querySelectorAll('[id^="edit-list"]');
-        this.textMode = document.getElementById('text-mode');
-        this.imageMode = document.getElementById('image-mode');
-        this.textInputArea = document.getElementById('text-input-area');
-        this.imageInputArea = document.getElementById('image-input-area');
 
         // Other elements
         this.choicesLeft = document.querySelector('.choices-left');
@@ -120,6 +115,8 @@ class UIController {
         this.saveListBtn.addEventListener('click', () => this.startSorting());
         this.clearListBtn.addEventListener('click', () => {
             this.listInput.value = '';
+            this.items.clear();
+            this.previewContainer.innerHTML = '';
             this.saveListBtn.disabled = true;
         });
         this.leftItemBtn.addEventListener('click', () => this.handleComparison('left'));
@@ -162,53 +159,12 @@ class UIController {
                 file.type.startsWith('image/')
             );
             if (files.length > 0) {
-                // Switch to image mode if we're in text mode
-                this.switchMode('image');
                 await this.handleFilesDrop(files);
             }
         });
 
         this.listInput.addEventListener('input', () => {
-            this.saveListBtn.disabled = !this.listInput.value.trim();
-        });
-
-        // Mode switching
-        this.textMode.addEventListener('click', () => this.switchMode('text'));
-        this.imageMode.addEventListener('click', () => this.switchMode('image'));
-        
-        // Image upload handling
-        this.imageDropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.imageDropZone.classList.add('dragover');
-        });
-
-        this.imageDropZone.addEventListener('dragleave', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.imageDropZone.classList.remove('dragover');
-        });
-
-        this.imageDropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            this.imageDropZone.classList.remove('dragover');
-            
-            const files = Array.from(e.dataTransfer.files).filter(file => 
-                file.type.startsWith('image/')
-            );
-            this.handleFilesDrop(files);
-        });
-
-        this.imageDropZone.addEventListener('click', () => {
-            this.fileInput.click();
-        });
-
-        this.fileInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files).filter(file => 
-                file.type.startsWith('image/')
-            );
-            this.handleFilesDrop(files);
+            this.updateSaveButton();
         });
     }
 
@@ -221,16 +177,14 @@ class UIController {
     startSorting() {
         let itemsToSort = new Map();
         
-        // Add text items from textarea if in text mode
-        if (!this.textInputArea.classList.contains('hidden')) {
-            const textItems = this.listInput.value
-                .split('\n')
-                .map(text => text.trim())
-                .filter(text => text)
-                .map(text => new Item(text, 'text'));
-                
-            textItems.forEach(item => itemsToSort.set(item.id, item));
-        }
+        // Add text items from textarea
+        const textItems = this.listInput.value
+            .split('\n')
+            .map(text => text.trim())
+            .filter(text => text)
+            .map(text => new Item(text, 'text'));
+            
+        textItems.forEach(item => itemsToSort.set(item.id, item));
         
         // Add image items from preview container
         this.items.forEach(item => itemsToSort.set(item.id, item));
@@ -297,26 +251,6 @@ class UIController {
         }
     }
 
-    switchMode(mode) {
-        // Update buttons
-        this.textMode.classList.toggle('active', mode === 'text');
-        this.imageMode.classList.toggle('active', mode === 'image');
-        
-        // Update input areas
-        this.textInputArea.classList.toggle('hidden', mode === 'image');
-        this.imageInputArea.classList.toggle('hidden', mode === 'text');
-        
-        // Clear the inactive input
-        if (mode === 'text') {
-            this.previewContainer.innerHTML = '';
-            this.items.clear();
-        } else {
-            this.listInput.value = '';
-        }
-        
-        this.updateSaveButton();
-    }
-
     async handleFilesDrop(files) {
         const imageFiles = files.filter(file => file.type.startsWith('image/'));
         
@@ -353,7 +287,7 @@ class UIController {
     }
 
     updateSaveButton() {
-        const hasText = !this.textInputArea.classList.contains('hidden') && this.listInput.value.trim().length > 0;
+        const hasText = this.listInput.value.trim().length > 0;
         const hasImages = this.items.size > 0;
         this.saveListBtn.disabled = !hasText && !hasImages;
     }
