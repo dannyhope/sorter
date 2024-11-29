@@ -200,98 +200,47 @@ button:disabled {
     font-size: 0.9rem;
 }
 
-.mode-switcher {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.mode-btn {
-    flex: 1;
-    padding: 0.75rem;
-    background: #f8f9fa;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    color: #666;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.mode-btn.active {
-    background: #007AFF;
-    color: white;
-    border-color: #007AFF;
-}
-
-.image-drop-zone {
-    border: 2px dashed #ccc;
-    border-radius: 8px;
-    padding: 40px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: #f9f9f9;
-    margin-bottom: 20px;
-}
-
-.image-drop-zone.dragover {
-    border-color: #4CAF50;
-    background: #e8f5e9;
-}
-
-.drop-message {
-    color: #666;
-}
-
-.drop-message svg {
-    margin-bottom: 10px;
-}
-
 .preview-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 1rem;
     margin-top: 1rem;
 }
 
 .preview-item {
     position: relative;
-    aspect-ratio: 1;
-    background: white;
+    width: 150px;
+    height: 150px;
     border-radius: 4px;
     overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    background: #f8f9fa;
 }
 
 .preview-item img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
-    background: #f8f9fa;
-    padding: 0.5rem;
+    object-fit: cover;
 }
 
 .preview-item .remove-btn {
     position: absolute;
-    top: 5px;
-    right: 5px;
-    background: rgba(255,255,255,0.9);
-    border: none;
-    border-radius: 50%;
+    top: 0.5rem;
+    right: 0.5rem;
     width: 24px;
     height: 24px;
+    padding: 0;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 18px;
+    line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    font-size: 16px;
-    color: #666;
-    transition: all 0.2s ease;
 }
 
 .preview-item .remove-btn:hover {
-    background: rgba(255,255,255,1);
-    color: #ff4444;
+    background: rgba(0, 0, 0, 0.7);
 }
 
 @media (max-width: 768px) {
@@ -311,7 +260,6 @@ button:disabled {
     }
     
     .preview-container {
-        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
         gap: 0.5rem;
     }
     

@@ -40,9 +40,12 @@ A single-page web application that helps users sort a list of items through pair
 
 ### List Management
 - Text area for manual list entry
+- Support for image file input via drag and drop
+- Image preview functionality with remove option
 - Quick-fill example with predefined animal list
 - Ability to edit list at any time
 - Save functionality for current list
+- Mixed content support (text and images in the same list)
 
 ### Sorting Algorithm
 - Implementation of uncertainty sampling for pair selection
@@ -55,12 +58,16 @@ A single-page web application that helps users sort a list of items through pair
 - Clear state transitions
 - Responsive layout
 - Intuitive comparison interface
+- Visual preview grid for uploaded images
+- Drag and drop zone with visual feedback
+- Remove buttons for individual items
 
 ## User Interactions
 1. List Creation/Editing
    - Manual text entry
    - One-click example list population
    - List saving functionality
+   - Image upload via drag and drop
 
 2. Comparison Process
    - Binary choice between two items
@@ -84,6 +91,8 @@ A single-page web application that helps users sort a list of items through pair
 - Local state management
 - No backend required
 - Session persistence
+- Efficient image handling using data URLs
+- Support for multiple file types (text and images)
 
 ### Browser Compatibility
 - Support for modern browsers
@@ -95,6 +104,9 @@ A single-page web application that helps users sort a list of items through pair
 - Custom styling options
 - List templates
 - Undo functionality
+- Batch image import
+- Image optimization
+- Cloud storage integration
 
 ## Development Guidelines
 - Clean, modular code structure
