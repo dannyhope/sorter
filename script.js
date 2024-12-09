@@ -51,15 +51,17 @@ class Sorter {
     }
 
     getSortedList() {
-        // Simple implementation of topological sort
+        // Calculate scores based on wins
         const scores = {};
-        this.items.forEach(item => scores[item] = 0);
+        this.items.forEach(item => scores[item.id] = 0);
         
+        // Count wins for each item
         this.comparisons.forEach(comp => {
-            scores[comp.winner]++;
+            scores[comp.winner.id]++;
         });
 
-        return [...this.items].sort((a, b) => scores[b] - scores[a]);
+        // Sort items by ascending score (fewer wins = lower position)
+        return [...this.items].sort((a, b) => scores[a.id] - scores[b.id]);
     }
 
     getConfidence() {
@@ -103,6 +105,7 @@ class UIController {
         this.leftItemBtn = document.getElementById('left-item');
         this.rightItemBtn = document.getElementById('right-item');
         this.copyListBtn = document.getElementById('copy-list');
+        this.startOverBtn = document.getElementById('start-over');
         this.editListBtns = document.querySelectorAll('[id^="edit-list"]');
 
         // Other elements
@@ -118,10 +121,12 @@ class UIController {
             this.items.clear();
             this.previewContainer.innerHTML = '';
             this.saveListBtn.disabled = true;
+            this.listInput.style.display = '';
         });
         this.leftItemBtn.addEventListener('click', () => this.handleComparison('left'));
         this.rightItemBtn.addEventListener('click', () => this.handleComparison('right'));
         this.copyListBtn.addEventListener('click', () => this.copyList());
+        this.startOverBtn.addEventListener('click', () => this.resetApp());
         this.editListBtns.forEach(btn => 
             btn.addEventListener('click', () => this.showState('editing-empty'))
         );
@@ -254,6 +259,12 @@ class UIController {
     async handleFilesDrop(files) {
         const imageFiles = files.filter(file => file.type.startsWith('image/'));
         
+        if (imageFiles.length > 0) {
+            // Clear existing text input if images are being added
+            this.listInput.value = '';
+            this.listInput.style.display = 'none';
+        }
+        
         for (const file of imageFiles) {
             try {
                 const dataUrl = await this.fileToDataURL(file);
@@ -280,6 +291,12 @@ class UIController {
         div.querySelector('.remove-btn').addEventListener('click', () => {
             this.items.delete(item.id);
             div.remove();
+            
+            // Show text input if no images remain
+            if (this.items.size === 0) {
+                this.listInput.style.display = '';
+            }
+            
             this.updateSaveButton();
         });
         
@@ -299,6 +316,19 @@ class UIController {
             reader.onerror = () => reject(reader.error);
             reader.readAsDataURL(file);
         });
+    }
+
+    resetApp() {
+        // Reset all state
+        this.sorter = new Sorter();
+        this.items.clear();
+        this.listInput.value = '';
+        this.previewContainer.innerHTML = '';
+        this.listInput.style.display = '';
+        this.saveListBtn.disabled = true;
+        
+        // Go back to editing state
+        this.showState('editing-empty');
     }
 }
 
